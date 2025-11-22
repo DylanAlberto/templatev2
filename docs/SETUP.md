@@ -191,12 +191,25 @@ templatev2/
 │       │       └── dashboard/
 │       └── package.json
 ├── packages/
-│   ├── ui/                     # Shared UI components
-│   ├── auth/                   # Authentication logic
-│   ├── data/                   # Data fetching hooks
-│   ├── config/                 # Config & stores
-│   └── i18n/                   # Internationalization
+│   ├── ui/                     # Shared UI components (Chakra UI)
+│   ├── auth/                   # Authentication logic & hooks
+│   ├── data/                   # Data fetching hooks (React Query)
+│   ├── config/                 # Config, Supabase client & stores (Zustand)
+│   └── i18n/                   # Internationalization (i18next)
+├── supabase/
+│   ├── config.toml             # Supabase local configuration
+│   └── functions/              # Supabase Edge Functions
+│       └── hello-world/        # Example Edge Function
+│           ├── index.ts
+│           └── deno.json
+├── .github/
+│   └── workflows/
+│       └── deploy-functions.yml # CI/CD for Edge Functions
 ├── docs/                       # Documentation
+│   ├── SETUP.md               # Complete setup guide
+│   ├── ARCHITECTURE.md        # Architecture overview
+│   ├── GUIDELINES.md          # Development guidelines
+│   └── MONOREPO_LIBRARIES.md  # Shared packages documentation
 ├── package.json                # Root package.json
 ├── turbo.json                  # Turborepo configuration
 ├── pnpm-workspace.yaml         # pnpm workspace config
