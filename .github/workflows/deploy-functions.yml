@@ -31,13 +31,16 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        
+      - name: Install Supabase CLI
+        run: curl -sL https://raw.githubusercontent.com/supabase/cli/main/install.sh | sh
 
       - name: Login to Supabase
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          pnpm exec supabase login --token $SUPABASE_ACCESS_TOKEN
-
+          supabase login --token $SUPABASE_ACCESS_TOKEN
+        
       - name: Deploy Edge Functions
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -46,9 +49,7 @@ jobs:
           if [ -z "$SUPABASE_PROJECT_REF" ]; then
             echo "Error: SUPABASE_PROJECT_REF secret is not set"
             echo "Please configure SUPABASE_PROJECT_REF in GitHub Secrets"
-            echo "You can find your Project Reference in Supabase Dashboard > Settings > General > Reference ID"
             exit 1
           fi
           
-          pnpm exec supabase functions deploy --no-verify-jwt --project-ref $SUPABASE_PROJECT_REF
-
+          supabase functions deploy --no-verify-jwt --project-ref $SUPABASE_PROJECT_REF
