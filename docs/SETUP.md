@@ -350,7 +350,137 @@ This configuration ensures:
   - Enable Vercel's remote cache for Turborepo (optional but recommended)
   - Consider upgrading Vercel plan for longer build times if needed
 
-### 9.2. Post-Deployment Checklist
+### 9.2. Supabase Edge Functions Deployment
+
+This project includes Supabase Edge Functions located in `apps/serverless/functions/`. To deploy these functions via CI/CD workflows, you need to configure a Supabase Access Token.
+
+#### Required Secret: SUPABASE_ACCESS_TOKEN
+
+The `SUPABASE_ACCESS_TOKEN` is required by CI/CD workflows (e.g., GitHub Actions) to authenticate with Supabase and deploy Edge Functions.
+
+##### Generate Supabase Access Token
+
+1. **Navigate to Supabase Dashboard**
+   - Go to [supabase.com](https://supabase.com) and sign in to your account
+
+2. **Access Account Settings**
+   - Click on your **profile icon** (top-right corner)
+   - Select **Account Settings** from the dropdown menu
+
+3. **Navigate to Access Tokens**
+   - In the Account Settings page, find the **Access Tokens** section
+   - (If not visible, it may be under **API** or **Personal Access Tokens**)
+
+4. **Create New Token**
+   - Click **Generate New Token** or **Create New Token** button
+   - Enter a descriptive name (e.g., "GitHub Actions - CI/CD Deployment")
+   - Select the required permissions:
+     - At minimum: `functions:read` and `functions:write`
+     - For full access: Select **All** or leave default permissions
+   - Click **Generate Token** or **Create**
+
+5. **Copy and Store the Token**
+   - ⚠️ **Important**: Copy the token immediately
+   - The token is only displayed once and cannot be retrieved later
+   - Store it securely (you'll add it to GitHub Secrets next)
+   - If lost, you must generate a new token
+
+##### Configure GitHub Secret
+
+1. **Navigate to Your GitHub Repository**
+   - Go to your repository on GitHub.com
+   - Click on the **Settings** tab
+
+2. **Access Secrets Configuration**
+   - In the left sidebar, expand **Secrets and variables**
+   - Click **Actions**
+
+3. **Add New Repository Secret**
+   - Click **New repository secret** button (top-right)
+   - **Name**: Enter exactly `SUPABASE_ACCESS_TOKEN` (case-sensitive)
+   - **Secret**: Paste the Supabase Access Token you generated above
+   - Click **Add secret**
+
+4. **Verify Secret is Added**
+   - Confirm that `SUPABASE_ACCESS_TOKEN` appears in your repository secrets list
+   - The secret is now available to all GitHub Actions workflows in this repository
+
+##### Additional Required Secret: SUPABASE_PROJECT_REF
+
+In addition to `SUPABASE_ACCESS_TOKEN`, you also need to configure your Supabase Project Reference ID.
+
+1. **Find Your Project Reference**
+   - Go to your Supabase Dashboard → **Settings** → **General**
+   - Locate the **Reference ID** field
+   - Copy the Reference ID (it's a short alphanumeric string, e.g., `abcdefghijklmnop`)
+
+2. **Add as GitHub Secret**
+   - Go to your GitHub repository → **Settings** → **Secrets and variables** → **Actions**
+   - Click **New repository secret**
+   - **Name**: Enter `SUPABASE_PROJECT_REF` (case-sensitive)
+   - **Secret**: Paste your Project Reference ID
+   - Click **Add secret**
+
+##### CI/CD Workflow Configuration
+
+A GitHub Actions workflow file is already configured at `.github/workflows/deploy-functions.yml`. This workflow:
+
+- ✅ Triggers automatically on every push to the `main` branch
+- ✅ Only runs when files in `apps/serverless/**` or `supabase/config.toml` are changed
+- ✅ Installs Supabase CLI via pnpm dependencies
+- ✅ Logs in to Supabase using the `SUPABASE_ACCESS_TOKEN` secret
+- ✅ Deploys all Edge Functions to your Supabase project
+
+**Required GitHub Secrets:**
+- `SUPABASE_ACCESS_TOKEN` - Your Supabase Access Token (see steps above)
+- `SUPABASE_PROJECT_REF` - Your Supabase Project Reference ID (see steps above)
+
+The workflow is ready to use once both secrets are configured. No additional changes are needed unless you want to customize the deployment behavior.
+
+**Note**: The Supabase CLI automatically uses the `SUPABASE_ACCESS_TOKEN` environment variable when it's set.
+
+##### Security Best Practices
+
+- ✅ **Never commit tokens**: Keep access tokens out of your repository code
+- ✅ **Use GitHub Secrets**: Always store sensitive tokens in GitHub Secrets
+- ✅ **Principle of least privilege**: Grant minimum required permissions to tokens
+- ✅ **Regular rotation**: Rotate access tokens periodically (every 90 days recommended)
+- ✅ **Monitor usage**: Review token usage in Supabase dashboard regularly
+- ✅ **Revoke unused tokens**: Delete tokens that are no longer needed
+- ✅ **Use descriptive names**: Name tokens clearly to identify their purpose
+
+##### Troubleshooting
+
+**Issue: "Access token not provided" error during CI/CD deployment**
+- **Solution**: 
+  - Verify `SUPABASE_ACCESS_TOKEN` is set in GitHub Secrets
+  - Ensure the secret name is exactly `SUPABASE_ACCESS_TOKEN` (case-sensitive, no spaces)
+  - Check that your workflow YAML references the secret: `${{ secrets.SUPABASE_ACCESS_TOKEN }}`
+  - Confirm the workflow has permission to access secrets (check repository settings)
+
+**Issue: "Invalid token" or "Unauthorized" error**
+- **Solution**:
+  - Verify the token was copied correctly (no extra whitespace, complete token)
+  - Check if the token has expired or been revoked in Supabase dashboard
+  - Generate a new token with appropriate permissions
+  - Update the GitHub Secret with the new token value
+
+**Issue: "Insufficient permissions" error**
+- **Solution**:
+  - Regenerate the token with `functions:read` and `functions:write` permissions
+  - For full deployment capabilities, ensure token has access to your project
+  - Update the token in GitHub Secrets
+
+**Issue: Token works locally but fails in CI/CD**
+- **Solution**:
+  - Verify the token is correctly set as a GitHub Secret (not as a regular variable)
+  - Ensure the workflow step sets the environment variable correctly
+  - Check that the token hasn't been revoked since you last tested locally
+  - Verify the repository has Actions enabled in Settings → Actions → General
+
+For more information, see the [Supabase CLI documentation](https://supabase.com/docs/reference/cli) and [GitHub Actions secrets documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+
+### 9.3. Post-Deployment Checklist
 
 After successful deployment:
 
@@ -359,6 +489,7 @@ After successful deployment:
 - [ ] Test OAuth (Google) if configured
 - [ ] Test password recovery flow
 - [ ] Verify dashboard functionality
+- [ ] Test Supabase Edge Functions (if deployed)
 - [ ] Check browser console for any errors
 - [ ] Verify all environment variables are correctly set
 - [ ] Test on mobile devices if applicable

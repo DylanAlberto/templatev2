@@ -1,0 +1,15 @@
+{
+  "name": "@templatev2/serverless",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Supabase Edge Functions",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  }
+}
+
