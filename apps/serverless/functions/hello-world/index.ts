@@ -135,5 +135,4 @@ Deno.serve(async (req) => {
   You can get this from the browser's localStorage after logging in, or by using:
   
   supabase.auth.getSession() in your frontend code
-
 */
