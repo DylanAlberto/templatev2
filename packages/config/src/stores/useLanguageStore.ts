@@ -47,7 +47,12 @@ export const useLanguageStore = create<LanguageState>()(
           getItem: () => null,
           setItem: () => {},
           removeItem: () => {},
-        } as Storage
+          clear: () => {},
+          get length() {
+            return 0;
+          },
+          key: () => null,
+        } satisfies Storage
       ),
       skipHydration: true,
     }

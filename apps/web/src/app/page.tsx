@@ -87,7 +87,7 @@ function DashboardContent() {
 
           <VStack gap={6} align="stretch">
             {tasksError && (
-              <Alert.Root status="error" borderRadius="md" variant="left-accent" alignItems="start">
+              <Alert.Root status="error" borderRadius="md"  alignItems="start">
                 <Alert.Indicator mt={1} />
                 <Alert.Content>
                   <Alert.Title fontWeight="medium" mb={1}>

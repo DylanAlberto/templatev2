@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
         </Box>
 
         {error && (
-          <Alert.Root status="error" mb={6} borderRadius="md" variant="left-accent">
+          <Alert.Root status="error" mb={6} borderRadius="md" >
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Description fontSize="sm">{error}</Alert.Description>
@@ -175,7 +175,7 @@ export default function ResetPasswordPage() {
 
         {success ? (
           <>
-            <Alert.Root status="success" mb={6} borderRadius="md" variant="left-accent">
+            <Alert.Root status="success" mb={6} borderRadius="md" >
               <Alert.Indicator />
               <Alert.Content>
                 <Alert.Description fontSize="sm">

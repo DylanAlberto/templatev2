@@ -83,7 +83,7 @@ export const system = createSystem(defaultConfig, {
           },
         },
         defaultVariants: {
-          colorPalette: "brand",
+          colorPalette: "brand" as any,
         },
       },
     },

@@ -58,7 +58,7 @@ export default function SignInPage() {
     return true;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -111,7 +111,7 @@ export default function SignInPage() {
         </Box>
 
         {error && (
-          <Alert.Root status="error" mb={6} borderRadius="md" variant="left-accent">
+          <Alert.Root status="error" mb={6} borderRadius="md" >
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Description fontSize="sm">{error}</Alert.Description>

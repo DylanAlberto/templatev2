@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
 
         {success ? (
           <>
-            <Alert.Root status="success" mb={6} borderRadius="md" variant="left-accent">
+            <Alert.Root status="success" mb={6} borderRadius="md" >
               <Alert.Indicator />
               <Alert.Content>
                 <Alert.Description fontSize="sm">
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <>
             {error && (
-              <Alert.Root status="error" mb={6} borderRadius="md" variant="left-accent">
+              <Alert.Root status="error" mb={6} borderRadius="md" >
                 <Alert.Indicator />
                 <Alert.Content>
                   <Alert.Description fontSize="sm">{error}</Alert.Description>

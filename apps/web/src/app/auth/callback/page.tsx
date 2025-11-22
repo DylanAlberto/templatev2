@@ -118,7 +118,7 @@ export default function AuthCallbackPage() {
 
         {status === "success" && (
           <>
-            <Alert.Root status="success" mb={6} borderRadius="md" variant="left-accent">
+            <Alert.Root status="success" mb={6} borderRadius="md" colorPalette="success">
               <Alert.Indicator />
               <Alert.Content>
                 <Alert.Description fontSize="sm">{message}</Alert.Description>
@@ -138,7 +138,7 @@ export default function AuthCallbackPage() {
 
         {status === "error" && (
           <>
-            <Alert.Root status="error" mb={6} borderRadius="md" variant="left-accent">
+            <Alert.Root status="error" mb={6} borderRadius="md" colorPalette="error">
               <Alert.Indicator />
               <Alert.Content>
                 <Alert.Description fontSize="sm">{message}</Alert.Description>
