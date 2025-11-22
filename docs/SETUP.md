@@ -240,14 +240,125 @@ After setup is complete:
 
 ## 9. Deployment
 
-### Vercel Deployment
-1. Push your code to GitHub/GitLab
-2. Import project in Vercel
-3. Add environment variables in Vercel dashboard:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `NEXT_PUBLIC_APP_URL` (your production URL)
-4. Update Supabase redirect URLs to include your production domain
-5. Deploy!
+### 9.1. Vercel Deployment Configuration
 
-The project uses Turborepo, so Vercel will automatically detect and configure the build settings for the monorepo.
+This project is configured for deployment on Vercel with Turborepo support. The configuration file `apps/web/vercel.json` is already set up with the necessary build commands.
+
+#### Required Environment Variables
+
+The following environment variables **must** be configured in the Vercel dashboard before deployment:
+
+| Variable | Description | Example | Required |
+|----------|-------------|---------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | `https://xxxxx.supabase.co` | ✅ Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous/public key | `eyJhbGc...` | ✅ Yes |
+| `NEXT_PUBLIC_APP_URL` | Your production application URL | `https://my-app.vercel.app` | ✅ Yes |
+
+**Note**: All environment variables must be prefixed with `NEXT_PUBLIC_` to be accessible in the browser.
+
+#### Deployment Steps
+
+1. **Push your code to GitHub/GitLab**
+   ```bash
+   git add .
+   git commit -m "Prepare for deployment"
+   git push origin main
+   ```
+
+2. **Import project in Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "Add New Project"
+   - Import your repository
+   - Vercel should auto-detect the Next.js app in `apps/web`
+
+3. **Configure Project Settings in Vercel**
+   - Go to **Settings** → **General**
+   - **Root Directory**: Set to `apps/web` (important for monorepo)
+   - **Framework Preset**: Next.js (auto-detected)
+   - The following are configured in `apps/web/vercel.json`:
+     - **Build Command**: `cd ../.. && pnpm build --filter=web`
+     - **Output Directory**: `.next`
+     - **Install Command**: `pnpm install`
+   - **Node.js Version**: 18.x or higher (recommended: 20.x LTS)
+   - **Package Manager**: pnpm (auto-detected from `packageManager` field)
+
+4. **Add Environment Variables**
+   - In the Vercel project dashboard, go to **Settings** → **Environment Variables**
+   - Add each of the required environment variables listed above
+   - **Important**: Add them for all environments (Production, Preview, Development)
+   - Copy the values from your local `.env.local` file (for Supabase values)
+   - For `NEXT_PUBLIC_APP_URL`, use your Vercel deployment URL (e.g., `https://your-project.vercel.app`)
+
+5. **Update Supabase Redirect URLs**
+   - Go to your Supabase Dashboard → **Authentication** → **URL Configuration**
+   - Add your production domain to **Site URL**: `https://your-project.vercel.app`
+   - Add to **Redirect URLs**:
+     - `https://your-project.vercel.app/auth/callback`
+     - `https://your-project.vercel.app/reset-password`
+   - If using Google OAuth, update the Google Cloud Console redirect URIs as well
+
+6. **Deploy!**
+   - Click "Deploy" in Vercel
+   - The build process will:
+     1. Install dependencies using `pnpm install`
+     2. Build all packages and the web app using Turborepo
+     3. Deploy the Next.js application
+
+#### Vercel Configuration File
+
+The project includes `apps/web/vercel.json` with the following configuration:
+
+```json
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd ../.. && pnpm build --filter=web",
+  "devCommand": "cd ../.. && pnpm dev --filter=web",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "outputDirectory": ".next"
+}
+```
+
+**Important**: The `rootDirectory` must be configured in Vercel's project settings (Settings → General → Root Directory) as `apps/web`, not in the `vercel.json` file. This ensures Vercel correctly identifies the monorepo structure.
+
+This configuration ensures:
+- Turborepo builds are executed correctly from the monorepo root
+- Only the `web` app is built (using `--filter=web`)
+- Dependencies are installed using pnpm
+- The correct output directory is used
+
+#### Troubleshooting Deployment
+
+**Issue: Build fails with "Cannot find module" errors**
+- **Solution**: Ensure `rootDirectory` is set to `apps/web` in Vercel settings
+- Verify that all workspace packages are properly linked
+
+**Issue: Environment variables not accessible**
+- **Solution**: 
+  - Verify variables are prefixed with `NEXT_PUBLIC_`
+  - Ensure variables are added for all environments (Production, Preview, Development)
+  - Redeploy after adding environment variables
+
+**Issue: Supabase authentication redirect fails**
+- **Solution**: 
+  - Verify `NEXT_PUBLIC_APP_URL` matches your Vercel deployment URL
+  - Check Supabase redirect URLs include your production domain
+  - Ensure callback URLs are correctly configured
+
+**Issue: Build times out**
+- **Solution**: 
+  - Enable Vercel's remote cache for Turborepo (optional but recommended)
+  - Consider upgrading Vercel plan for longer build times if needed
+
+### 9.2. Post-Deployment Checklist
+
+After successful deployment:
+
+- [ ] Verify the application loads at your production URL
+- [ ] Test authentication flows (sign in, sign up)
+- [ ] Test OAuth (Google) if configured
+- [ ] Test password recovery flow
+- [ ] Verify dashboard functionality
+- [ ] Check browser console for any errors
+- [ ] Verify all environment variables are correctly set
+- [ ] Test on mobile devices if applicable
