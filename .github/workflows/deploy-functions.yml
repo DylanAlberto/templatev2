@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'apps/serverless/**'
+      - 'supabase/functions/**'
       - 'supabase/config.toml'
       - '.github/workflows/deploy-functions.yml'
   workflow_dispatch:

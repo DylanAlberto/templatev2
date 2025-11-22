@@ -113,14 +113,27 @@ CREATE POLICY "Users can delete their own tasks"
 
 ### 4.1. Development Mode
 ```bash
-# Run all apps in development mode
+# Run all apps in development mode (includes Supabase local instance)
 pnpm dev
 
-# Or run a specific app
-pnpm dev --filter=web
+# Or run only the web app
+pnpm dev:web
+
+# Or run only Supabase locally
+pnpm dev:supabase
 ```
 
-The Next.js app will be available at `http://localhost:3000`
+The command `pnpm dev` will:
+- ✅ Start Supabase local development environment (database, API, auth, storage, etc.)
+- ✅ Start the Next.js development server
+
+**Available URLs:**
+- Next.js app: `http://localhost:3000`
+- Supabase API: `http://127.0.0.1:54321`
+- Supabase Studio: `http://127.0.0.1:54323`
+- Supabase Inbucket (email testing): `http://127.0.0.1:54324`
+
+**Note**: The first time you run `pnpm dev`, Supabase will download and start Docker containers. This may take a few minutes. Subsequent runs will be faster.
 
 ### 4.2. Build for Production
 ```bash
@@ -352,7 +365,7 @@ This configuration ensures:
 
 ### 9.2. Supabase Edge Functions Deployment
 
-This project includes Supabase Edge Functions located in `apps/serverless/functions/`. To deploy these functions via CI/CD workflows, you need to configure a Supabase Access Token.
+This project includes Supabase Edge Functions located in `supabase/functions/`. To deploy these functions via CI/CD workflows, you need to configure a Supabase Access Token.
 
 #### Required Secret: SUPABASE_ACCESS_TOKEN
 
@@ -426,7 +439,7 @@ In addition to `SUPABASE_ACCESS_TOKEN`, you also need to configure your Supabase
 A GitHub Actions workflow file is already configured at `.github/workflows/deploy-functions.yml`. This workflow:
 
 - ✅ Triggers automatically on every push to the `main` branch
-- ✅ Only runs when files in `apps/serverless/**` or `supabase/config.toml` are changed
+- ✅ Only runs when files in `supabase/functions/**` or `supabase/config.toml` are changed
 - ✅ Installs Supabase CLI via pnpm dependencies
 - ✅ Logs in to Supabase using the `SUPABASE_ACCESS_TOKEN` secret
 - ✅ Deploys all Edge Functions to your Supabase project
